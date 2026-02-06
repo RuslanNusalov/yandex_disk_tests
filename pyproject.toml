@@ -1,0 +1,22 @@
+[project]
+name = "yandex-disk-tests"
+version = "0.0.1"
+description = "Проект автоматизированных тестов для Яндекс.Диска REST API с использованием Python, Pytest и requests"
+authors = [
+    {name = "Nusalov Ruslan"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pytest (==7.4.3)",
+    "pytest-html (==4.1.1)",
+    "pytest-cov (==4.1.0)",
+    "requests (==2.31.0)",
+    "python-dotenv (==1.0.0)",
+    "faker (==20.1.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
