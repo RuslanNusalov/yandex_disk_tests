@@ -1,5 +1,5 @@
 import pytest
-import request
+import requests
 from utils.helpers import assert_status_code, wait_for_resource
 from utils.config import Config
 
@@ -13,7 +13,7 @@ class TestFolderOperations:
         """Тест: Создание папки (PUT /resources)"""
         response = api_client.create_folder(unique_folder_name)
         
-        # 201 = создано, 409 = уже существует (тоже OK для наших целей)
+        # 201 = создано, 409 = уже существует (тоже допустимо)
         assert response.status_code in [201, 409], \
             f"Не удалось создать папку. Status: {response.status_code}, Response: {response.text}"
         
@@ -88,19 +88,28 @@ class TestFolderOperations:
     @pytest.mark.post
     def test_move_rename_folder(self, api_client, test_folder):
         """Тест: Перемещение/переименование папки (POST /resources/move)"""
-        # ИСПРАВЛЕНО: используем префикс из конфигурации правильно
-        new_folder_name = f"renamed_{test_folder}"  # Убран дублирующийся префикс
+        new_folder_name = f"renamed_{test_folder}"
         
+        # Перемещаем/переименовываем папку
         response = api_client.move_resource(test_folder, new_folder_name)
-        assert_status_code(response, 201, "Не удалось переместить/переименовать папку")
+        
+        # Принимаем как 201 (синхронное), так и 202 (асинхронное) выполнение
+        assert response.status_code in [201, 202], \
+            f"Не удалось переместить/переименовать папку. Status: {response.status_code}, Response: {response.text}"
+        
+        # Ждём появления новой папки (для асинхронных операций)
+        assert wait_for_resource(api_client, new_folder_name), \
+            "Новая папка не появилась после операции"
         
         # Проверяем, что старая папка удалена
         old_metadata = api_client.get_metadata(test_folder)
         assert old_metadata.status_code == 404, "Старая папка всё ещё существует"
         
-        # Проверяем, что новая папка создана
-        assert wait_for_resource(api_client, new_folder_name), \
-            "Новая папка не появилась"
+        # Проверяем метаданные новой папки
+        new_metadata = api_client.get_metadata(new_folder_name)
+        assert_status_code(new_metadata, 200, "Не удалось получить метаданные новой папки")
+        assert new_metadata.json()['name'] == new_folder_name.split('/')[-1], \
+            "Имя новой папки не совпадает"
         
         # Очищаем
         api_client.delete_resource(new_folder_name, permanently=True)
@@ -121,14 +130,19 @@ class TestFolderOperations:
         
         # Копируем папку
         response = api_client.copy_resource(test_folder, copy_folder_name)
-        assert_status_code(response, 201, "Не удалось скопировать папку")
         
-        # Проверяем, что копия существует
+        # Принимаем как 201 (синхронное), так и 202 (асинхронное) выполнение
+        assert response.status_code in [201, 202], \
+            f"Не удалось скопировать папку. Status: {response.status_code}, Response: {response.text}"
+        
+        # Ждём появления копии (для асинхронных операций)
         assert wait_for_resource(api_client, copy_folder_name), \
-            "Копия папки не появилась"
+            "Копия папки не появилась после операции"
         
         # Проверяем, что в копии есть файл
         copy_contents = api_client.get_resources_list(copy_folder_name)
+        assert_status_code(copy_contents, 200, "Не удалось получить содержимое копии")
+        
         items = copy_contents.json()['_embedded']['items']
         assert any(item['name'] == 'test.txt' for item in items), \
             "Файл не скопировался вместе с папкой"
