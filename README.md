@@ -15,7 +15,7 @@
 ```bash
 git clone git@github.com:RuslanNusalov/yandex_disk_tests.git
 ```
-2. перейдите в папку с проектом
+2. Перейдите в папку с проектом
 ```bash
 cd yandex_disk_tests
 ```
@@ -23,11 +23,13 @@ cd yandex_disk_tests
 ```bash
 direnv allow    
 ```
-4. установите зависимости   
+4. Получите OAuth-токен здесь: https://yandex.ru/dev/disk/poligon/, переименуйте файл .env.example в .env и укажите свое значение токена
+
+5. Установите зависимости   
 ```bash
 poetry install
 ```
-5. запустите тесты
+6. Запустите тесты
 ```bash
 poetry run pytest
 ```
