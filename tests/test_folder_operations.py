@@ -1,6 +1,7 @@
 import pytest
+import request
 from utils.helpers import assert_status_code, wait_for_resource
-from utils.config import Config  # ДОБАВЛЕН ИМПОРТ
+from utils.config import Config
 
 class TestFolderOperations:
     """Тесты для операций с папками"""
