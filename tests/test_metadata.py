@@ -1,8 +1,8 @@
 import pytest
 from utils.helpers import assert_status_code
-from utils.config import Config  # ДОБАВЛЕН ИМПОРТ
+from utils.config import Config
 
-class TestMeta
+class TestMetadata:  # ИСПРАВЛЕНО: добавлено двоеточие после имени класса
     """Тесты для работы с метаданными"""
     
     @pytest.mark.api
