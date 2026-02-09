@@ -1,7 +1,8 @@
 import pytest
 from utils.helpers import assert_status_code
+from utils.config import Config  # ДОБАВЛЕН ИМПОРТ
 
-class TestMetadata:
+class TestMeta
     """Тесты для работы с метаданными"""
     
     @pytest.mark.api

@@ -1,5 +1,6 @@
 import pytest
 from utils.helpers import assert_status_code, wait_for_resource
+from utils.config import Config  # ДОБАВЛЕН ИМПОРТ
 
 class TestFolderOperations:
     """Тесты для операций с папками"""
@@ -86,7 +87,8 @@ class TestFolderOperations:
     @pytest.mark.post
     def test_move_rename_folder(self, api_client, test_folder):
         """Тест: Перемещение/переименование папки (POST /resources/move)"""
-        new_folder_name = f"{Config.TEST_PREFIX}renamed_{test_folder}"
+        # ИСПРАВЛЕНО: используем префикс из конфигурации правильно
+        new_folder_name = f"renamed_{test_folder}"  # Убран дублирующийся префикс
         
         response = api_client.move_resource(test_folder, new_folder_name)
         assert_status_code(response, 201, "Не удалось переместить/переименовать папку")
@@ -110,11 +112,11 @@ class TestFolderOperations:
         
         # Создаем файл в исходной папке для проверки копирования содержимого
         test_file = f"{test_folder}/test.txt"
-        with open('data/test_file.txt', 'r') as f:
-            content = f.read()
+        with open('data/test_file.txt', 'r', encoding='utf-8') as f:
+            content = f.read().encode('utf-8')
         
         upload_link = api_client.get_upload_link(test_file)
-        requests.put(upload_link, data=content.encode())
+        requests.put(upload_link, data=content)
         
         # Копируем папку
         response = api_client.copy_resource(test_folder, copy_folder_name)
