@@ -1,6 +1,7 @@
 import pytest
 import os
-import shutil
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from utils.api_client import YandexDiskClient
 from utils.config import Config
 from utils.helpers import generate_unique_name
