@@ -13,5 +13,21 @@
 
 1. Клонируйте репозиторий:
 ```bash
-git clone <repository-url>
+git clone git@github.com:RuslanNusalov/yandex_disk_tests.git
+```
+2. перейдите в папку с проектом
+```bash
 cd yandex_disk_tests
+```
+3. установите окружение
+```bash
+direnv allow    
+```
+4. установите зависимости   
+```bash
+poetry install
+```
+5. запустите тесты
+```bash
+poetry run pytest
+```
